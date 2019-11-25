@@ -18,7 +18,7 @@ version: 1
 patchUpdated:
   generators:
     - command: kustomize build .
-  patchFile flux-patch.yaml
+  patchFile: flux-patch.yaml
 EOF
 
 mkdir -p install
