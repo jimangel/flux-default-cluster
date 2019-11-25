@@ -34,8 +34,3 @@ EOF
 
 mkdir -p cluster
 
-cat <<EOF >cluster/kustomization.yaml
-bases:
-  - ./nginx-ingress/
-  - ./common/
-EOF
