@@ -13,13 +13,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-cat <<EOF >.flux.yaml
-version: 1
-commandUpdated:
-  generators:
-    - command: kustomize build .
-EOF
-
 mkdir -p install
 
 cat <<EOF >install/kustomization.yaml
@@ -32,4 +25,11 @@ EOF
 
 
 mkdir -p cluster
+
+cat <<EOF >cluster/.flux.yaml
+version: 1
+commandUpdated:
+  generators:
+    - command: kustomize build .
+EOF
 
