@@ -15,10 +15,22 @@ set -o pipefail
 
 cat <<EOF >.flux.yml
 version: 1
-commandUpdated:
+patchUpdated:
   generators:
-    - command: kustomize build 
+    - command: kustomize build .
+  patchFile flux-patch.yaml
 EOF
+
+mkdir -p install
+
+cat <<EOF >install/kustomization.yaml
+namespace: flux-system
+bases:
+  - ../base/flux/
+patchesStrategicMerge:
+  - flux-patch.yaml
+EOF
+
 
 mkdir -p cluster
 
