@@ -1,0 +1,3 @@
+resources:
+- ingress-deployment.yaml
+namespace: nginx-ingress
