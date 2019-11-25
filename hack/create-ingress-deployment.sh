@@ -30,6 +30,8 @@ EOF
 
 
 cat <<EOF >cluster/nginx-ingress-default/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 namespace: nginx-ingress
 bases:
   - ../common/
