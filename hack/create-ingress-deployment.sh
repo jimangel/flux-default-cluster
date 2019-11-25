@@ -15,6 +15,13 @@ set -o pipefail
 mkdir -p cluster/nginx-ingress-default
 mkdir -p cluster/common
 
+
+cat <<EOF >cluster/common/kustomization.yaml
+resources:
+  - ingress-deployment.yaml
+EOF
+
+
 cat <<EOF >cluster/kustomization.yaml
 bases:
   - ./common/
