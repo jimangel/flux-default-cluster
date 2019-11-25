@@ -14,12 +14,29 @@ set -o pipefail
 
 # user argument, if not present default to jimangel
 
-mkdir -p cluster/nginx-ingress
+mkdir -p cluster/nginx-ingress-default
+mkdir -p cluster/base
 
-cat <<EOF >cluster/nginx-ingress/kustomization.yaml
+cat <<EOF >cluster/base/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 resources:
 - ingress-deployment.yaml
-namespace: nginx-ingress
+EOF
+
+
+cat <<EOF >cluster/nginx-ingress-default/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../base/
+EOF
+
+cat <<EOF >cluster/nginx-ingress-default/flux-patch.yaml
+---
+apiVersion: apps/v1
+metadata:
+  namespace: nginx-ingress
 EOF
 
 # use helm v3 to generate template and drop clusterIP (due to https://github.com/kubernetes/ingress-nginx/issues/1612)
@@ -28,6 +45,6 @@ helm template ingress-helm stable/nginx-ingress \
 --set controller.replicaCount="3" \
 --set controller.service.type="NodePort" \
 --set controller.service.nodePorts.http="30080" \
---set controller.service.nodePorts.https="30443" | grep -v  clusterIP > cluster/nginx-ingress/ingress-deployment.yaml
+--set controller.service.nodePorts.https="30443" | grep -v  clusterIP > cluster/base/ingress-deployment.yaml
 
-kubeval cluster/nginx-ingress/ingress-deployment.yaml || echo "failed" && exit 1
+kubeval cluster/base/ingress-deployment.yaml || echo "failed" && exit 1
