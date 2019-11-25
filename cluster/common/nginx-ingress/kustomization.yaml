@@ -1,3 +1,4 @@
+namespace: nginx-ingress 
 resources:
   - clusterrolebinding.yaml
   - clusterrole.yaml

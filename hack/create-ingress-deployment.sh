@@ -17,6 +17,7 @@ mkdir -p cluster/common/nginx-ingress
 
 # TIP: ls cluster/common/nginx-ingress/ -lah | awk '{print "  - "$9}' | grep -v kustom* | grep .*.yaml
 cat <<EOF >cluster/common/nginx-ingress/kustomization.yaml
+namespace: nginx-ingress 
 resources:
   - clusterrolebinding.yaml
   - clusterrole.yaml
