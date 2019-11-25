@@ -13,12 +13,11 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-cat <<EOF >.flux.yml
+cat <<EOF >.flux.yaml
 version: 1
-patchUpdated:
+commandUpdated:
   generators:
     - command: kustomize build .
-  patchFile: flux-patch.yaml
 EOF
 
 mkdir -p install
