@@ -1,3 +1,2 @@
 bases:
-  - ./common/namespaces/
   - ./nginx-ingress-default/

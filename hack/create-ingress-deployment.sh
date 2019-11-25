@@ -35,7 +35,6 @@ EOF
 
 cat <<EOF >cluster/kustomization.yaml
 bases:
-  - ./common/namespaces/
   - ./nginx-ingress-default/
 EOF
 

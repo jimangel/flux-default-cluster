@@ -44,7 +44,7 @@ spec:
             - --sync-interval=5m
             - --ssh-keygen-dir=/var/fluxd/keygen
             - --git-branch=master
-            - --git-path=cluster
+            - --git-path=cluster,namespaces
             - --git-email=${GHUSER}@users.noreply.github.com
             - --git-url=git@github.com:${GHUSER}/flux-default-cluster
 EOF
