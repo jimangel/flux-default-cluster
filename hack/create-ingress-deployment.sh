@@ -24,12 +24,6 @@ EOF
 
 cat <<EOF >cluster/nginx-ingress-default/kustomization.yaml
 namespace: nginx-ingress
-resources:
-  - ingress-deployment.yaml
-EOF
-
-cat <<EOF >cluster/nginx-ingress-default/flux-patch.yaml
-namespace: nginx-ingress
 EOF
 
 # use helm v3 to generate template and drop clusterIP (due to https://github.com/kubernetes/ingress-nginx/issues/1612)
@@ -38,6 +32,6 @@ helm template ingress-helm stable/nginx-ingress \
 --set controller.replicaCount="3" \
 --set controller.service.type="NodePort" \
 --set controller.service.nodePorts.http="30080" \
---set controller.service.nodePorts.https="30443" | grep -v  clusterIP > cluster/nginx-ingress-default/ingress-deployment.yaml
+--set controller.service.nodePorts.https="30443" | grep -v  clusterIP > cluster/common/ingress-deployment.yaml
 
-kubeval cluster/nginx-ingress-default/ingress-deployment.yaml || echo "failed" && exit 1
+kubeval cluster/common/ingress-deployment.yaml || echo "failed" && exit 1
