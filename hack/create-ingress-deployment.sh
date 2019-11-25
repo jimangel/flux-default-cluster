@@ -12,10 +12,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-# user argument, if not present default to jimangel
-
 mkdir -p cluster/nginx-ingress-default
-mkdir -p cluster/base
+mkdir -p cluster/common
 
 cat <<EOF >cluster/kustomization.yaml
 bases:
@@ -41,6 +39,6 @@ helm template ingress-helm stable/nginx-ingress \
 --set controller.replicaCount="3" \
 --set controller.service.type="NodePort" \
 --set controller.service.nodePorts.http="30080" \
---set controller.service.nodePorts.https="30443" | grep -v  clusterIP > cluster/base/ingress-deployment.yaml
+--set controller.service.nodePorts.https="30443" | grep -v  clusterIP > cluster/nginx-ingress-default/ingress-deployment.yaml
 
-kubeval cluster/base/ingress-deployment.yaml || echo "failed" && exit 1
+kubeval cluster/nginx-ingress-default/ingress-deployment.yaml || echo "failed" && exit 1
