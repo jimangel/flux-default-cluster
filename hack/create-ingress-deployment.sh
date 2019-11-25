@@ -13,10 +13,10 @@ set -o nounset
 set -o pipefail
 
 mkdir -p cluster/nginx-ingress-default
-mkdir -p cluster/common
+mkdir -p cluster/common/nginx-ingress
 
 
-cat <<EOF >cluster/common/kustomization.yaml
+cat <<EOF >cluster/common/nginx-ingress/kustomization.yaml
 resources:
   - ingress-deployment.yaml
 EOF
@@ -24,7 +24,8 @@ EOF
 
 cat <<EOF >cluster/kustomization.yaml
 bases:
-  - ./common/
+  - ./common/namespaces/
+  - ./common/nginx-ingress/
   - ./nginx-ingress-default/
 EOF
 
@@ -34,15 +35,16 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: nginx-ingress
 bases:
-  - ../common/
+  - ../common/nginx-ingress/
 EOF
 
 # use helm v3 to generate template and drop clusterIP (due to https://github.com/kubernetes/ingress-nginx/issues/1612)
+kubectl config set-context --current --namespace=nginx-ingress
 helm template ingress-helm stable/nginx-ingress \
 --set rbac.create=true \
 --set controller.replicaCount="3" \
 --set controller.service.type="NodePort" \
 --set controller.service.nodePorts.http="30080" \
---set controller.service.nodePorts.https="30443" | grep -v  clusterIP > cluster/common/ingress-deployment.yaml
+--set controller.service.nodePorts.https="30443" | grep -v  clusterIP > cluster/common/nginx-ingress/ingress-deployment.yaml
 
-kubeval cluster/common/ingress-deployment.yaml || echo "failed" && exit 1
+kubeval cluster/common/nginx-ingress/ingress-deployment.yaml || echo "failed" && exit 1
