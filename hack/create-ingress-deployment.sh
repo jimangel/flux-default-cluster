@@ -15,17 +15,26 @@ set -o pipefail
 mkdir -p cluster/nginx-ingress-default
 mkdir -p cluster/common/nginx-ingress
 
-
+# TIP: ls cluster/common/nginx-ingress/ -lah | awk '{print "  - "$9}' | grep -v kustom* | grep .*.yaml
 cat <<EOF >cluster/common/nginx-ingress/kustomization.yaml
 resources:
-  - ingress-deployment.yaml
+  - clusterrolebinding.yaml
+  - clusterrole.yaml
+  - controller-deployment.yaml
+  - controller-poddisruptionbudget.yaml
+  - controller-rolebinding.yaml
+  - controller-role.yaml
+  - controller-serviceaccount.yaml
+  - controller-service.yaml
+  - default-backend-deployment.yaml
+  - default-backend-serviceaccount.yaml
+  - default-backend-service.yaml
 EOF
 
 
 cat <<EOF >cluster/kustomization.yaml
 bases:
   - ./common/namespaces/
-  - ./common/nginx-ingress/
   - ./nginx-ingress-default/
 EOF
 
@@ -45,6 +54,12 @@ helm template ingress-helm stable/nginx-ingress \
 --set controller.replicaCount="3" \
 --set controller.service.type="NodePort" \
 --set controller.service.nodePorts.http="30080" \
---set controller.service.nodePorts.https="30443" | grep -v  clusterIP > cluster/common/nginx-ingress/ingress-deployment.yaml
+--set controller.service.nodePorts.https="30443" \
+--output-dir cluster/common/nginx-ingress
 
-kubeval cluster/common/nginx-ingress/ingress-deployment.yaml || echo "failed" && exit 1
+cp cluster/common/nginx-ingress/nginx-ingress/templates/*.yaml cluster/common/nginx-ingress/
+rm -rf cluster/common/nginx-ingress/nginx-ingress
+
+# TODO : REMOVE grep -v  clusterIP > cluster/common/nginx-ingress/ingress-deployment.yaml
+
+for file in $(ls cluster/common/nginx-ingress/ | grep -v kustomization.yaml); do kubeval cluster/common/nginx-ingress/"${file}" || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
