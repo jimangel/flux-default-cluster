@@ -235,7 +235,6 @@ metadata:
     release: ingress-helm
   name: ingress-helm-nginx-ingress-controller
 spec:
-  clusterIP: ""
   ports:
     - name: http
       port: 80
@@ -265,7 +264,6 @@ metadata:
     release: ingress-helm
   name: ingress-helm-nginx-ingress-default-backend
 spec:
-  clusterIP: ""
   ports:
     - name: http
       port: 80
