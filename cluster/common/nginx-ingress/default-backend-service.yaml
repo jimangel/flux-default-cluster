@@ -21,4 +21,3 @@ spec:
     app: nginx-ingress
     component: "default-backend"
     release: ingress-helm
-  type: "ClusterIP"

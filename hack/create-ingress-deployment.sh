@@ -60,6 +60,7 @@ helm template ingress-helm stable/nginx-ingress \
 cp cluster/common/nginx-ingress/nginx-ingress/templates/*.yaml cluster/common/nginx-ingress/
 rm -rf cluster/common/nginx-ingress/nginx-ingress
 
-# TODO : REMOVE grep -v  clusterIP > cluster/common/nginx-ingress/ingress-deployment.yaml
+# from ClusterIP causing issues on baremetal
+sed -i '/ClusterIP/d' $(grep -rl ClusterIP cluster/common/nginx-ingress/)
 
 for file in $(ls cluster/common/nginx-ingress/ | grep -v kustomization.yaml); do kubeval cluster/common/nginx-ingress/"${file}" || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
