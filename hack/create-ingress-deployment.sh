@@ -33,8 +33,6 @@ bases:
 EOF
 
 cat <<EOF >cluster/nginx-ingress-default/flux-patch.yaml
----
-apiVersion: apps/v1
 metadata:
   namespace: nginx-ingress
 EOF
