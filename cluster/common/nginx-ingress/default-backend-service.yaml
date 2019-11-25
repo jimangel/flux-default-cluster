@@ -11,7 +11,6 @@ metadata:
     release: ingress-helm
   name: ingress-helm-nginx-ingress-default-backend
 spec:
-  clusterIP: ""
   ports:
     - name: http
       port: 80
@@ -21,3 +20,4 @@ spec:
     app: nginx-ingress
     component: "default-backend"
     release: ingress-helm
+  type: "ClusterIP"

@@ -59,6 +59,6 @@ cp cluster/common/nginx-ingress/nginx-ingress/templates/*.yaml cluster/common/ng
 rm -rf cluster/common/nginx-ingress/nginx-ingress
 
 # from ClusterIP causing issues on baremetal
-sed -i '/ClusterIP/d' $(grep -rl ClusterIP cluster/common/nginx-ingress/)
+for YAML in $(grep -rl clusterIP cluster/common/nginx-ingress); do sed -i '/clusterIP/d' $YAML; done
 
 for file in $(ls cluster/common/nginx-ingress/ | grep -v kustomization.yaml); do kubeval cluster/common/nginx-ingress/"${file}" || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
