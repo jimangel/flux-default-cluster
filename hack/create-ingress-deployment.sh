@@ -31,8 +31,6 @@ EOF
 
 cat <<EOF >cluster/nginx-ingress-default/kustomization.yaml
 namespace: nginx-ingress
-resources:
-  - ingress-deployment
 bases:
   - ../common/
 EOF
