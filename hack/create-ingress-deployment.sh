@@ -34,7 +34,7 @@ namespace: nginx-ingress
 resources:
   - ingress-deployment
 bases:
-  ./common/
+  - ../common/
 EOF
 
 # use helm v3 to generate template and drop clusterIP (due to https://github.com/kubernetes/ingress-nginx/issues/1612)

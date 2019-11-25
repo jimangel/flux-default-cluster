@@ -2,4 +2,4 @@ namespace: nginx-ingress
 resources:
   - ingress-deployment
 bases:
-  ./common/
+  - ../common/
