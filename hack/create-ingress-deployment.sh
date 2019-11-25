@@ -17,19 +17,17 @@ set -o pipefail
 mkdir -p cluster/nginx-ingress-default
 mkdir -p cluster/base
 
-cat <<EOF >cluster/base/kustomization.yaml
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- ingress-deployment.yaml
+cat <<EOF >cluster/kustomization.yaml
+bases:
+  - ./common/
+  - ./nginx-ingress-default/
 EOF
 
 
 cat <<EOF >cluster/nginx-ingress-default/kustomization.yaml
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-bases:
-- ../base/
+namespace: nginx-ingress
+resources:
+  - ingress-deployment.yaml
 EOF
 
 cat <<EOF >cluster/nginx-ingress-default/flux-patch.yaml

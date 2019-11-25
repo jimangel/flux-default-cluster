@@ -13,4 +13,4 @@ set -o nounset
 set -o pipefail
 
 mkdir -p base/namespaces
-kubectl create ns "${1}" -o yaml --dry-run > base/namespaces/"${1}".yaml
+kubectl create ns "${1}" -o yaml --dry-run > cluster/common/"${1}".yaml
