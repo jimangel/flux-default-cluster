@@ -40,24 +40,17 @@ spec:
         - name: flux
           args:
             - --manifest-generation=true
-            - --memcached-hostname=flux-memcached.flux-system
-            - --memcached-service=
             - --git-poll-interval=5m
             - --sync-interval=5m
             - --ssh-keygen-dir=/var/fluxd/keygen
             - --git-branch=master
             - --git-path=cluster
+            - --git-email=${GHUSER}@users.noreply.github.com
             - --git-url=git@github.com:${GHUSER}/flux-default-cluster
 EOF
 
+# clean up
 rm -rf master.zip
 rm -rf flux-master/
-
-#fluxctl install \
-#--git-user=${GHUSER} \
-#--git-email=${GHUSER}@users.noreply.github.com \
-#--git-url=git@github.com:${GHUSER}/flux-default-cluster \
-#--git-path=cluster \
-#--namespace=flux-system > base/flux/flux-in-a-box.yaml
 
 for file in $(ls base/flux | grep -v kustomization.yaml); do kubeval base/flux/"${file}" || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
