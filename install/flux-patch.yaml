@@ -13,6 +13,6 @@ spec:
             - --sync-interval=5m
             - --ssh-keygen-dir=/var/fluxd/keygen
             - --git-branch=master
-            - --git-path=cluster,namespaces
+            - --git-path=cluster-kustomize,cluster-static
             - --git-email=jimangel@users.noreply.github.com
             - --git-url=git@github.com:jimangel/flux-default-cluster
