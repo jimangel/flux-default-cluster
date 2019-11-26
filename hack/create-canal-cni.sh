@@ -8,12 +8,23 @@
 # TODO: add (T / F) auto-commit to master branch (Y /N?)
 # =======================================================
 
+
+#################
+#################
+#
+# WIP!!
+#
+#################
+#################
+
+
+
 set -o errexit
 set -o nounset
 set -o pipefail
 
-mkdir -p cluster-kustomize/nginx-ingress-default
-mkdir -p cluster-kustomize/common/nginx-ingress
+mkdir -p base/nginx-ingress-default
+mkdir -p install/cni
 
 # TIP: ls cluster-kustomize/common/nginx-ingress/ -lah | awk '{print "  - "$9}' | grep -v kustom* | grep .*.yaml
 cat <<EOF >cluster-kustomize/common/nginx-ingress/kustomization.yaml
@@ -32,7 +43,7 @@ resources:
 EOF
 
 
-cat <<EOF >cluster-kustomize/nginx-ingress-default/kustomization.yaml
+cat <<EOF >cluster/nginx-ingress-default/kustomization.yaml
 namespace: nginx-ingress
 bases:
   - ../common/nginx-ingress/
@@ -46,12 +57,12 @@ helm template ingress-helm stable/nginx-ingress \
 --set controller.service.type="NodePort" \
 --set controller.service.nodePorts.http="30080" \
 --set controller.service.nodePorts.https="30443" \
---output-dir cluster-kustomize/common/nginx-ingress
+--output-dir cluster/common/nginx-ingress
 
-cp cluster-kustomize/common/nginx-ingress/nginx-ingress/templates/*.yaml cluster-kustomize/common/nginx-ingress/
-rm -rf cluster-kustomize/common/nginx-ingress/nginx-ingress
+cp cluster/common/nginx-ingress/nginx-ingress/templates/*.yaml cluster/common/nginx-ingress/
+rm -rf cluster/common/nginx-ingress/nginx-ingress
 
 # from ClusterIP causing issues on baremetal
-for YAML in $(grep -rl clusterIP cluster-kustomize/common/nginx-ingress); do sed -i '/clusterIP/d' $YAML; done
+for YAML in $(grep -rl clusterIP cluster/common/nginx-ingress); do sed -i '/clusterIP/d' $YAML; done
 
-for file in $(ls cluster-kustomize/common/nginx-ingress/ | grep -v kustomization.yaml); do kubeval cluster-kustomize/common/nginx-ingress/"${file}" || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
+for file in $(ls cluster/common/nginx-ingress/ | grep -v kustomization.yaml); do kubeval cluster/common/nginx-ingress/"${file}" || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
