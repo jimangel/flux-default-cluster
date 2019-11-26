@@ -15,6 +15,7 @@ set -o pipefail
 
 mkdir -p install
 
+
 cat <<EOF >install/kustomization.yaml
 namespace: flux-system
 bases:
@@ -24,9 +25,15 @@ patchesStrategicMerge:
 EOF
 
 
-mkdir -p cluster
+mkdir -p cluster-kustomize
 
-cat <<EOF >cluster/.flux.yaml
+cat <<EOF >cluster-kustomize/kustomization.yaml
+bases:
+  - ./nginx-ingress-default/
+  - ./prometheus/
+EOF
+
+cat <<EOF >cluster-kustomize/.flux.yaml
 version: 1
 commandUpdated:
   generators:

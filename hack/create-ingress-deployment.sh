@@ -12,11 +12,11 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-mkdir -p cluster/nginx-ingress-default
-mkdir -p cluster/common/nginx-ingress
+mkdir -p cluster-kustomize/nginx-ingress-default
+mkdir -p cluster-kustomize/common/nginx-ingress
 
-# TIP: ls cluster/common/nginx-ingress/ -lah | awk '{print "  - "$9}' | grep -v kustom* | grep .*.yaml
-cat <<EOF >cluster/common/nginx-ingress/kustomization.yaml
+# TIP: ls cluster-kustomize/common/nginx-ingress/ -lah | awk '{print "  - "$9}' | grep -v kustom* | grep .*.yaml
+cat <<EOF >cluster-kustomize/common/nginx-ingress/kustomization.yaml
 resources:
   - clusterrolebinding.yaml
   - clusterrole.yaml
@@ -29,12 +29,6 @@ resources:
   - default-backend-deployment.yaml
   - default-backend-serviceaccount.yaml
   - default-backend-service.yaml
-EOF
-
-
-cat <<EOF >cluster/kustomization.yaml
-bases:
-  - ./nginx-ingress-default/
 EOF
 
 

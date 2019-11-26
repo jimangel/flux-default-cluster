@@ -12,6 +12,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-mkdir -p namespaces
+mkdir -p cluster-static
 
-kubectl create ns "${1}" -o yaml --dry-run > namespaces/"${1}".yaml
+kubectl create ns "${1}" -o yaml --dry-run > cluster-static/"${1}"-namespace.yaml
