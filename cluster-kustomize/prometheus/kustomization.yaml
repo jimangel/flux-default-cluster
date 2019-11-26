@@ -1,3 +1,2 @@
-namespace: monitoring
 bases:
   - ../common/kube-prometheus/

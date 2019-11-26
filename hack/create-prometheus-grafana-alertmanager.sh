@@ -96,7 +96,6 @@ EOF
 
 # SETUP  BASE (folder / callout namespace)
 cat <<EOF >cluster-kustomize/prometheus/kustomization.yaml
-namespace: monitoring
 bases:
   - ../common/kube-prometheus/
 EOF
