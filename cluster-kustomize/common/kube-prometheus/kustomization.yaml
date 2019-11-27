@@ -1,5 +1,4 @@
 resources:
-  - 0namespace-namespace.yaml
   - alertmanager-alertmanager.yaml
   - alertmanager-secret.yaml
   - alertmanager-serviceAccount.yaml
@@ -39,17 +38,7 @@ resources:
   - prometheus-adapter-service.yaml
   - prometheus-clusterRoleBinding.yaml
   - prometheus-clusterRole.yaml
-  - prometheus-operator-0alertmanagerCustomResourceDefinition.yaml
-  - prometheus-operator-0podmonitorCustomResourceDefinition.yaml
-  - prometheus-operator-0prometheusCustomResourceDefinition.yaml
-  - prometheus-operator-0prometheusruleCustomResourceDefinition.yaml
-  - prometheus-operator-0servicemonitorCustomResourceDefinition.yaml
-  - prometheus-operator-clusterRoleBinding.yaml
-  - prometheus-operator-clusterRole.yaml
-  - prometheus-operator-deployment.yaml
-  - prometheus-operator-serviceAccount.yaml
   - prometheus-operator-serviceMonitor.yaml
-  - prometheus-operator-service.yaml
   - prometheus-prometheus.yaml
   - prometheus-roleBindingConfig.yaml
   - prometheus-roleBindingSpecificNamespaces.yaml

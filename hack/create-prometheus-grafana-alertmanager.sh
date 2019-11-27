@@ -11,22 +11,34 @@ set -o pipefail
 
 
 mkdir -p cluster-kustomize/prometheus
-mkdir -p cluster-kustomize/common/kube-prometheus/
+mkdir -p cluster-kustomize/common/kube-prometheus
+
+# this is needed becuase we have to split up the CRDs and manifests
+#mkdir -p cluster-static/prometheus
 
 curl -LO https://github.com/coreos/kube-prometheus/archive/master.zip
 unzip master.zip
 
 rsync -avh kube-prometheus-master/manifests/ cluster-kustomize/common/kube-prometheus/
 
-cp -r cluster-kustomize/common/kube-prometheus/setup/*.yaml cluster-kustomize/common/kube-prometheus/
+mv cluster-kustomize/common/kube-prometheus/setup/*.yaml cluster-kustomize/common/kube-prometheus/
 
+# splitting out CRDs
+# rsync -avh cluster-kustomize/common/kube-prometheus/setup/ cluster-static/prometheus/
+
+# delete namespace (since already created)
+# TODO: turn to if exists...
+#rm cluster-static/prometheus/0namespace-namespace.yaml
+
+rm  cluster-kustomize/common/kube-prometheus/0namespace-namespace.yaml
+
+# clean up kustomize folder
 rm -rf cluster-kustomize/common/kube-prometheus/setup
 
 # SETUP KUSTOMIZE  RESOURCES
 # TIP: ls cluster-kustomize/common/kube-prometheus/ -lah | awk '{print "  - "$9}' | grep -v kustom* | grep .*.yaml
 cat <<EOF >cluster-kustomize/common/kube-prometheus/kustomization.yaml
 resources:
-  - 0namespace-namespace.yaml
   - alertmanager-alertmanager.yaml
   - alertmanager-secret.yaml
   - alertmanager-serviceAccount.yaml
@@ -105,5 +117,8 @@ EOF
 # clean up
 rm -rf master.zip
 rm -rf kube-prometheus-master
+
+#for file in $(ls cluster-static/prometheus/); do kubeval --ignore-missing-schemas cluster-static/prometheus/"${file}" || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
+
 
 for file in $(ls cluster-kustomize/common/kube-prometheus | grep -v kustomization.yaml); do kubeval --ignore-missing-schemas cluster-kustomize/common/kube-prometheus/"${file}" || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
