@@ -1,0 +1,88 @@
+---
+# Source: harbor/templates/jobservice/jobservice-dpl.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "harbor-helm-harbor-jobservice"
+  labels:
+    heritage: Helm
+    release: harbor-helm
+    chart: harbor
+    app: "harbor"
+    component: jobservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      release: harbor-helm
+      app: "harbor"
+      component: jobservice
+  template:
+    metadata:
+      labels:
+        heritage: Helm
+        release: harbor-helm
+        chart: harbor
+        app: "harbor"
+        component: jobservice
+      annotations:
+        checksum/configmap: 93fbc5c3d70d5742499c8565159230f33e134d01b36b2c940c45cf17c017707c
+        checksum/secret: 41848cfe2711b7f8d9d54f83f984085e7fa4eed24dcb8d8f98eb4d0458ac8e67
+        checksum/secret-core: f184223188359cbe90c884b460fffd59621866776938283d3352635c9dbb3eb2
+    spec:
+      securityContext:
+        fsGroup: 10000
+      containers:
+      - name: jobservice
+        image: goharbor/harbor-jobservice:v1.9.3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /api/v1/stats
+            port: 8080
+          initialDelaySeconds: 300
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/v1/stats
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+        env:
+          - name: CORE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: harbor-helm-harbor-core
+                key: secret
+          - name: JOBSERVICE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: "harbor-helm-harbor-jobservice"
+                key: secret
+          - name: CORE_URL
+            value: "http://harbor-helm-harbor-core"
+          - name: REGISTRY_CONTROLLER_URL
+            value: "http://harbor-helm-harbor-registry:8080"
+          - name: LOG_LEVEL
+            value: debug
+          - name: HTTP_PROXY
+            value: ""
+          - name: HTTPS_PROXY
+            value: ""
+          - name: NO_PROXY
+            value: "harbor-helm-harbor-core,harbor-helm-harbor-jobservice,harbor-helm-harbor-database,harbor-helm-harbor-chartmuseum,harbor-helm-harbor-clair,harbor-helm-harbor-notary-server,harbor-helm-harbor-notary-signer,harbor-helm-harbor-registry,127.0.0.1,localhost,.local,.internal"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: jobservice-config
+          mountPath: /etc/jobservice/config.yml
+          subPath: config.yml
+        - name: job-logs
+          mountPath: /var/log/jobs
+          subPath: 
+      volumes:
+      - name: jobservice-config
+        configMap:
+          name: "harbor-helm-harbor-jobservice"
+      - name: job-logs
+        emptyDir: {}

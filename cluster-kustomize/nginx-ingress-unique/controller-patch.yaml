@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingress-helm-nginx-ingress-controller
+spec:
+  template:
+    spec:
+      tolerations:
+      - key: "node-role.kubernetes.io/ingress"
+        operator: "Exists"
+        effect: "NoSchedule"
+      containers:
+        - name: nginx-ingress-controller
+          args:
+            - /nginx-ingress-controller
+            - --default-backend-service=$(POD_NAMESPACE)/ingress-helm-nginx-ingress-default-backend
+            - --election-id=ingress-controller-leader
+            - --ingress-class=nginx
+            - --configmap=$(POD_NAMESPACE)/nginx-configuration
+            - --tcp-services-configmap=$(POD_NAMESPACE)/tcp-services
+            - --udp-services-configmap=$(POD_NAMESPACE)/udp-services
+            - --annotations-prefix=nginx.ingress.kubernetes.io
+            - --default-ssl-certificate=ingress-nginx/default-ingress-ssl
+      nodeSelector:
+        node-role.kubernetes.io/ingress: ""

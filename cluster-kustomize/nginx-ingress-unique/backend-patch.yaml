@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingress-helm-nginx-ingress-default-backend
+spec:
+  template:
+    spec:
+      tolerations:
+      - key: "node-role.kubernetes.io/ingress"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        node-role.kubernetes.io/ingress: ""

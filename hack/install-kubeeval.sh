@@ -14,8 +14,9 @@ set -o pipefail
 curl -Lo ./kubeval.tar.gz https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
 tar -xvf kubeval.tar.gz
 
-mv kubeval /usr/local/bin/kubeval
-chmod +x /usr/local/bin/kubeval
+sudo cp kubeval /usr/local/bin/kubeval
+sudo rm -rf kubeval
+sudo chmod +x /usr/local/bin/kubeval
 
 # clean up
 for i in $(tar tf kubeval.tar.gz); do `rm -rf $i`; done

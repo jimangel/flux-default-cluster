@@ -1,0 +1,7 @@
+namespace: gatekeeper-system
+bases:
+  - ../../base/gatekeeper
+#images:
+#  - name: quay.io/custom-image
+#    newName: quay.io/jimangel/custom-image
+#    newTag: 0.26.1-patched

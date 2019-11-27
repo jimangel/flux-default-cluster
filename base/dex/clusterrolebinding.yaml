@@ -1,0 +1,20 @@
+---
+# Source: dex/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/name: dex
+    helm.sh/chart: dex-2.5.0
+    app.kubernetes.io/instance: dex-helm
+    app.kubernetes.io/version: "2.19.0"
+    app.kubernetes.io/managed-by: Helm
+  name: dex-helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dex-helm
+subjects:
+  - kind: ServiceAccount
+    name: dex-helm
+    namespace: nginx-ingress

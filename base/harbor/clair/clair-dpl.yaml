@@ -1,0 +1,64 @@
+---
+# Source: harbor/templates/clair/clair-dpl.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: harbor-helm-harbor-clair
+  labels:
+    heritage: Helm
+    release: harbor-helm
+    chart: harbor
+    app: "harbor"
+    component: clair
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      release: harbor-helm
+      app: "harbor"
+      component: clair
+  template:
+    metadata:
+      labels:
+        heritage: Helm
+        release: harbor-helm
+        chart: harbor
+        app: "harbor"
+        component: clair
+      annotations:
+        checksum/secret: 9abfb3659f0b301cfdd0a3ebac575ea67fe227497d8fc52dc8c8f591eabd1ca1
+    spec:
+      containers:
+      - name: clair
+        image: goharbor/clair-photon:v2.1.0-v1.9.3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 6061
+          initialDelaySeconds: 300
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 6061
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        args: ["-log-level", "debug"]
+        env:
+        - name: HTTP_PROXY
+          value: ""
+        - name: HTTPS_PROXY
+          value: ""
+        - name: NO_PROXY
+          value: "harbor-helm-harbor-core,harbor-helm-harbor-jobservice,harbor-helm-harbor-database,harbor-helm-harbor-chartmuseum,harbor-helm-harbor-clair,harbor-helm-harbor-notary-server,harbor-helm-harbor-notary-signer,harbor-helm-harbor-registry,127.0.0.1,localhost,.local,.internal"
+        ports:
+        - containerPort: 6060
+        volumeMounts:
+        - name: config
+          mountPath: /etc/clair/config.yaml
+          subPath: config.yaml
+      volumes:
+      - name: config
+        secret:
+          secretName: "harbor-helm-harbor-clair"

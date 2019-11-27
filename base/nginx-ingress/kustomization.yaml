@@ -1,0 +1,14 @@
+
+resources:
+  - ./psp.yaml
+  - ./clusterrolebinding.yaml
+  - ./controller-deployment.yaml
+  - ./controller-service.yaml
+  - ./controller-rolebinding.yaml
+  - ./default-backend-deployment.yaml
+  - ./controller-serviceaccount.yaml
+  - ./controller-poddisruptionbudget.yaml
+  - ./default-backend-service.yaml
+  - ./default-backend-serviceaccount.yaml
+  - ./controller-role.yaml
+  - ./clusterrole.yaml

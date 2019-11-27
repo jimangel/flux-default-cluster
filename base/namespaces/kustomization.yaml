@@ -1,0 +1,7 @@
+
+resources:
+  - ./flux-system-ns.yaml
+  - ./harbor-ns.yaml
+  - ./monitoring-ns.yaml
+  - ./gatekeeper-system-ns.yaml
+  - ./nginx-ingress-ns.yaml

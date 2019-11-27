@@ -1,0 +1,7 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ingress-helm-nginx-ingress-controller
+  namespace: nginx-ingress
+data:
+  enable-underscores-in-headers: "true"

@@ -17,52 +17,55 @@
 #################
 #################
 
-
-
 set -o errexit
 set -o nounset
 set -o pipefail
 
-mkdir -p base/nginx-ingress-default
+BASE_REPO="base/canal"
+KUSTOMIZE_REPO="install/cni"
+
 mkdir -p install/cni
+mkdir -p base/canal
+
+curl -Lo base/canal/canal.yaml https://docs.projectcalico.org/v3.10/manifests/canal.yaml
 
 # TIP: ls cluster-kustomize/common/nginx-ingress/ -lah | awk '{print "  - "$9}' | grep -v kustom* | grep .*.yaml
-cat <<EOF >cluster-kustomize/common/nginx-ingress/kustomization.yaml
+cat <<EOF >${BASE_REPO}/kustomization.yaml
 resources:
-  - clusterrolebinding.yaml
-  - clusterrole.yaml
-  - controller-deployment.yaml
-  - controller-poddisruptionbudget.yaml
-  - controller-rolebinding.yaml
-  - controller-role.yaml
-  - controller-serviceaccount.yaml
-  - controller-service.yaml
-  - default-backend-deployment.yaml
-  - default-backend-serviceaccount.yaml
-  - default-backend-service.yaml
+  - canal.yaml
 EOF
 
+# create the patch that updates Calico's PV4 POOL
+cat <<EOF >${KUSTOMIZE_REPO}/pod-cidr-patch.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: canal
+spec:
+  template:
+    spec:
+      containers:
+        - name: calico-node
+          env:
+            - name: CALICO_IPV4POOL_CIDR
+              value: "10.244.0.0/16"
+EOF
 
-cat <<EOF >cluster/nginx-ingress-default/kustomization.yaml
-namespace: nginx-ingress
+cat <<EOF >${KUSTOMIZE_REPO}/kustomization.yaml
+patchesStrategicMerge:
+  - pod-cidr-patch.yaml
 bases:
-  - ../common/nginx-ingress/
+  - ../../base/canal/
+images:
+  - name: quay.io/coreos/flannel
+    newName: quay.io/coreos/flannel-git
+    newTag: v0.11.0-59-g960b324
+  - name: calico/pod2daemon-flexvol
+    newName: quay.io/jimangel/pod2daemon-flexvol
+    newTag: v3.10.2-patched
 EOF
 
-# use helm v3 to generate template and drop clusterIP (due to https://github.com/kubernetes/ingress-nginx/issues/1612)
-kubectl config set-context --current --namespace=nginx-ingress
-helm template ingress-helm stable/nginx-ingress \
---set rbac.create=true \
---set controller.replicaCount="3" \
---set controller.service.type="NodePort" \
---set controller.service.nodePorts.http="30080" \
---set controller.service.nodePorts.https="30443" \
---output-dir cluster/common/nginx-ingress
+for file in $(ls ${BASE_REPO} | grep -v kustomization.yaml | grep yaml); do kubeval --ignore-missing-schemas ${BASE_REPO}/${file} || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
 
-cp cluster/common/nginx-ingress/nginx-ingress/templates/*.yaml cluster/common/nginx-ingress/
-rm -rf cluster/common/nginx-ingress/nginx-ingress
-
-# from ClusterIP causing issues on baremetal
-for YAML in $(grep -rl clusterIP cluster/common/nginx-ingress); do sed -i '/clusterIP/d' $YAML; done
-
-for file in $(ls cluster/common/nginx-ingress/ | grep -v kustomization.yaml); do kubeval cluster/common/nginx-ingress/"${file}" || if [[ $? -eq 1 ]]; then echo "failed" && exit 1; fi; done
+echo "last updated by $0 on $(date +%F)" > ${BASE_REPO}/readme.md
+echo "last updated by $0 on $(date +%F)" > ${KUSTOMIZE_REPO}/readme.md

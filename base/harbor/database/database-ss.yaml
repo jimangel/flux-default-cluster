@@ -1,0 +1,75 @@
+---
+# Source: harbor/templates/database/database-ss.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "harbor-helm-harbor-database"
+  labels:
+    heritage: Helm
+    release: harbor-helm
+    chart: harbor
+    app: "harbor"
+    component: database
+spec:
+  replicas: 1
+  serviceName: "harbor-helm-harbor-database"
+  selector:
+    matchLabels:
+      release: harbor-helm
+      app: "harbor"
+      component: database
+  template:
+    metadata:
+      labels:
+        heritage: Helm
+        release: harbor-helm
+        chart: harbor
+        app: "harbor"
+        component: database
+      annotations:
+        checksum/secret: 7bfc113de72a6abeb028dc8c8ffb20daacba859c1ed80fad8f2e9bba88c378ea
+    spec:
+      initContainers:
+      - name: "change-permission-of-directory"
+        image: "busybox:latest"
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh"]
+        args: ["-c", "chown -R 999:999 /var/lib/postgresql/data"]
+        volumeMounts:
+        - name: database-data
+          mountPath: /var/lib/postgresql/data
+          subPath: 
+      - name: "remove-lost-found"
+        image: goharbor/harbor-db:v1.9.3
+        imagePullPolicy: IfNotPresent
+        command: ["rm", "-Rf", "/var/lib/postgresql/data/lost+found"]
+        volumeMounts:
+        - name: database-data
+          mountPath: /var/lib/postgresql/data
+          subPath: 
+      containers:
+      - name: database
+        image: goharbor/harbor-db:v1.9.3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /docker-healthcheck.sh
+          initialDelaySeconds: 300
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - /docker-healthcheck.sh
+          initialDelaySeconds: 1
+          periodSeconds: 10
+        envFrom:
+          - secretRef:
+              name: "harbor-helm-harbor-database"
+        volumeMounts:
+        - name: database-data
+          mountPath: /var/lib/postgresql/data
+          subPath: 
+      volumes:
+      - name: "database-data"
+        emptyDir: {}

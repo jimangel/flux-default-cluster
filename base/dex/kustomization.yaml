@@ -1,0 +1,10 @@
+resources:
+  - clusterrolebinding.yaml
+  - clusterrole.yaml
+  - config-openssl.yaml
+  - deployment.yaml
+  - rolebinding.yaml
+  - role.yaml
+  - secret.yaml
+  - serviceaccount.yaml
+  - service.yaml

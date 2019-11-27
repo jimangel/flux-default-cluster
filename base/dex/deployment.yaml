@@ -1,0 +1,79 @@
+---
+# Source: dex/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dex-helm
+  labels:
+    app.kubernetes.io/name: dex
+    helm.sh/chart: dex-2.5.0
+    app.kubernetes.io/instance: dex-helm
+    app.kubernetes.io/version: "2.19.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: dex
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dex
+      app.kubernetes.io/instance: dex-helm
+      app.kubernetes.io/component: dex
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: dex
+        app.kubernetes.io/instance: dex-helm
+        app.kubernetes.io/component: dex
+      annotations:
+        checksum/config: 99636e4a269af4afa1d8aa24dbfed48acaf75041be40cc9f12ad76bde9213273
+    spec:
+      serviceAccountName: dex-helm
+      nodeSelector:
+          {}
+      containers:
+      - name: main
+        image: "quay.io/dexidp/dex:v2.19.0"
+        imagePullPolicy: IfNotPresent
+        command:
+        - /usr/local/bin/dex
+        - serve
+        - /etc/dex/cfg/config.yaml
+        resources:
+          null
+        ports:
+        - name: http
+          containerPort: 5556
+          protocol: TCP
+        - name: grpc
+          containerPort: 5000
+          protocol: TCP
+        env:
+          []
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: config
+        - mountPath: /etc/dex/tls/grpc/server
+          name: grpc-tls-server
+        - mountPath: /etc/dex/tls/grpc/ca
+          name: grpc-tls-ca
+      volumes:
+      - secret:
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+          secretName: dex-helm
+        name: config
+      - name: grpc-tls-server
+        secret:
+          defaultMode: 420
+          secretName: "dex-grpc-server-tls"
+      - name: grpc-tls-ca
+        secret:
+          defaultMode: 420
+          secretName: "dex-grpc-ca"

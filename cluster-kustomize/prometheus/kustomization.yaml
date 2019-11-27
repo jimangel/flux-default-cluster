@@ -1,2 +1,0 @@
-bases:
-  - ../common/kube-prometheus/

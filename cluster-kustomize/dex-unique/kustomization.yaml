@@ -1,0 +1,7 @@
+namespace: kube-system
+bases:
+  - ../../base/dex/
+#images:
+#  - name: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
+#    newName: quay.io/jimangel/nginx-ingress-controller
+#    newTag: 0.26.1-patched

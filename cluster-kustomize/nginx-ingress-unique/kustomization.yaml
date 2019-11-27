@@ -1,0 +1,13 @@
+namespace: nginx-ingress
+resources:
+  - config-map.yaml
+  - extra-psp-binding.yaml
+bases:
+  - ../../base/nginx-ingress
+images:
+  - name: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
+    newName: quay.io/jimangel/nginx-ingress-controller
+    newTag: 0.26.1-patched
+patchesStrategicMerge:
+  - controller-patch.yaml
+  - backend-patch.yaml

@@ -1,0 +1,26 @@
+
+resources:
+  - ./ingress/secret.yaml
+  - ./ingress/ingress.yaml
+  - ./jobservice/jobservice-svc.yaml
+  - ./jobservice/jobservice-dpl.yaml
+  - ./jobservice/jobservice-secrets.yaml
+  - ./jobservice/jobservice-cm.yaml
+  - ./registry/registry-dpl.yaml
+  - ./registry/registry-svc.yaml
+  - ./registry/registry-secret.yaml
+  - ./registry/registry-cm.yaml
+  - ./core/core-svc.yaml
+  - ./core/core-dpl.yaml
+  - ./core/core-cm.yaml
+  - ./core/core-secret.yaml
+  - ./clair/clair-dpl.yaml
+  - ./clair/clair-secret.yaml
+  - ./clair/clair-svc.yaml
+  - ./portal/deployment.yaml
+  - ./portal/service.yaml
+  - ./database/database-svc.yaml
+  - ./database/database-secret.yaml
+  - ./database/database-ss.yaml
+  - ./redis/statefulset.yaml
+  - ./redis/service.yaml

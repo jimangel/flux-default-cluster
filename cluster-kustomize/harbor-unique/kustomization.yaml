@@ -1,0 +1,7 @@
+namespace: harbor
+bases:
+  - ../../base/harbor
+#images:
+#  - name: quay.io/kubernetes-ingress/
+#    newName: quay.io/jimangel/nginx-ingress-controller
+#    newTag: 0.26.1-patched

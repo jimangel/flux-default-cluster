@@ -1,0 +1,4 @@
+resources:
+  - ingress-objects.yaml
+bases:
+  - ../../base/kube-prometheus

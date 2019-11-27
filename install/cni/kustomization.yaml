@@ -1,0 +1,11 @@
+patchesStrategicMerge:
+  - pod-cidr-patch.yaml
+bases:
+  - ../../base/canal/
+images:
+  - name: quay.io/coreos/flannel
+    newName: quay.io/coreos/flannel-git
+    newTag: v0.11.0-59-g960b324
+  - name: calico/pod2daemon-flexvol
+    newName: quay.io/jimangel/pod2daemon-flexvol
+    newTag: v3.10.2-patched

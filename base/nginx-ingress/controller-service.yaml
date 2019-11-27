@@ -1,0 +1,31 @@
+---
+# Source: nginx-ingress/templates/controller-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.26.2
+    component: "controller"
+    heritage: Helm
+    release: ingress-helm
+  name: ingress-helm-nginx-ingress-controller
+spec:
+  
+  externalTrafficPolicy: "Local"
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+      nodePort: 30080
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: https
+      nodePort: 30443
+  selector:
+    app: nginx-ingress
+    component: "controller"
+    release: ingress-helm
+  type: "NodePort"

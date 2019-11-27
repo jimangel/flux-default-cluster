@@ -9,9 +9,22 @@
 # =======================================================
 
 set -o errexit
-set -o nounset
 set -o pipefail
 
-mkdir -p cluster-static
+NAMESPACE_FOLDER="base/namespaces"
+NAMESPACE=${1}
 
-kubectl create ns "${1}" -o yaml --dry-run > cluster-static/"${1}"-namespace.yaml
+if [[ -z "$1" ]]; then
+    echo "Must provide NAME of namespace" 1>&2
+    exit 1
+fi
+
+mkdir -p ${NAMESPACE_FOLDER}
+
+kubectl create ns "${NAMESPACE}" -o yaml --dry-run > ${NAMESPACE_FOLDER}/"${NAMESPACE}"-ns.yaml
+
+# add resources folder
+rm -rf ${NAMESPACE_FOLDER}/kustomization.yaml
+bash hack/generate-kustomize-resources.sh ${NAMESPACE_FOLDER}
+
+echo "last updated by $0 on $(date +%F)" > ${NAMESPACE_FOLDER}/readme.md

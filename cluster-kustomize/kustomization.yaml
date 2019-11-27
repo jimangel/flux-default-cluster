@@ -1,3 +1,17 @@
 bases:
-  - ./nginx-ingress-default/
-#  - ./prometheus/
+  - ../base/namespaces/
+  - ./nginx-ingress-unique/
+#  - ./harbor-unique/
+# wip - ./dashboard2/
+# wip - ./gangway-unique/
+# wip - ./minio/
+# wip - ./rook/
+# wip - ./istio/
+# wip - ./consul-server/
+# wip - ./consul-client/
+# wip - ./consul-connect-servicemesh/
+# wip - ./vault/
+# wip - ./elk/
+#  - ./gatekeeper-unique/
+#  - ./dex-unique/
+#  - ./prometheus-unique/
