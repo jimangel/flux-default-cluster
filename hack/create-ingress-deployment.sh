@@ -120,9 +120,9 @@ helm template ingress-helm stable/nginx-ingress \
 --set controller.service.nodePorts.http="30080" \
 --set controller.service.nodePorts.https="30443" \
 --set controller.replicaCount="3" \
---set controller.service.externalTrafficPolicy="Local" \
 --output-dir ${BASE_FOLDER}
 
+#--set controller.service.externalTrafficPolicy="Local" \
 #--set defaultBackend.nodeSelector.node-role\\.kubernetes\\.io/ingress="" \
 #--set controller.nodeSelector.node-role\\.kubernetes\\.io/ingress="" \
 #--set controller.tolerations[0].key="node-role.kubernetes.io/ingress" \
