@@ -36,24 +36,24 @@ resources:
 EOF
 
 # create the patch that updates Calico's PV4 POOL
-cat <<EOF >${KUSTOMIZE_REPO}/pod-cidr-patch.yaml
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: canal
-spec:
-  template:
-    spec:
-      containers:
-        - name: calico-node
-          env:
-            - name: CALICO_IPV4POOL_CIDR
-              value: "10.244.0.0/16"
-EOF
+#cat <<EOF >${KUSTOMIZE_REPO}/pod-cidr-patch.yaml
+#apiVersion: apps/v1
+#kind: DaemonSet
+#metadata:
+#  name: canal
+#spec:
+#  template:
+#    spec:
+#      containers:
+#        - name: calico-node
+#          env:
+#            - name: CALICO_IPV4POOL_CIDR
+#              value: "10.244.0.0/16" <- don't do this, overlaps with flannel.
+#EOF
 
 cat <<EOF >${KUSTOMIZE_REPO}/kustomization.yaml
-patchesStrategicMerge:
-  - pod-cidr-patch.yaml
+#patchesStrategicMerge:
+#  - pod-cidr-patch.yaml
 bases:
   - ../../base/canal/
 images:
